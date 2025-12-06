@@ -1,0 +1,5 @@
+CREATE TABLE bronze.erp_cust_az12 (
+CID NVARCHAR (50),
+BDATE DATETIME,
+GEN NVARCHAR (50)
+);
