@@ -23,21 +23,24 @@ IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DataWarehouse')
 BEGIN
     /*
     =========================================================================
-    OPTIONAL: Backup existing database before deletion
+    OPTIONAL: Backup existing database before deletion (with timestamp)
     Description: Creates a full backup of the existing 'DataWarehouse' 
-    before it is dropped to prevent data loss.
+    with current date and time in the filename.
+    To enable: remove leading --
     =========================================================================
     */
-    -- BACKUP DATABASE DataWarehouse TO DISK = 'C:\Backup\DataWarehouse.bak' WITH INIT;
+    -- EXEC ('BACKUP DATABASE DataWarehouse TO DISK = ''C:\Backup\DataWarehouse_' + FORMAT(GETDATE(), 'yyyyMMdd_HHmmss') + '.bak'' WITH INIT;');
+
     /*
     =========================================================================
-    OPTIONAL: Rename existing database instead of deleting it
+    OPTIONAL: Rename existing database instead of deleting it (with timestamp)
     Description: Renames the current 'DataWarehouse' database to 
-    'DataWarehouse_OLD' for archival or rollback purposes and
+    'DataWarehouse_<CurrentTime>' for archival or rollback purposes and
     immediately stops further script execution.
+    To enable: remove leading --
     =========================================================================
     */
-    -- EXEC ('EXEC sp_renamedb ''DataWarehouse'', ''DataWarehouse_OLD''; RETURN;');
+    -- EXEC ('DECLARE @N sysname = ''DataWarehouse_'' + FORMAT(GETDATE(), ''yyyyMMdd_HHmmss''); EXEC sp_renamedb ''DataWarehouse'', @N; RETURN;');
 
     ALTER DATABASE DataWarehouse SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
     DROP DATABASE DataWarehouse;
