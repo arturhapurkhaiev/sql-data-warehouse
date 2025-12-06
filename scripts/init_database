@@ -28,7 +28,7 @@ BEGIN
     before it is dropped to prevent data loss.
     =========================================================================
     */
-    -- -- BACKUP DATABASE DataWarehouse TO DISK = 'C:\Backup\DataWarehouse.bak' WITH INIT;
+    -- BACKUP DATABASE DataWarehouse TO DISK = 'C:\Backup\DataWarehouse.bak' WITH INIT;
     /*
     =========================================================================
     OPTIONAL: Rename existing database instead of deleting it
