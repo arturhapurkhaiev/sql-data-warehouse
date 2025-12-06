@@ -1,0 +1,4 @@
+CREATE TABLE bronze.erp_loc_a101 (
+CID NVARCHAR (50),
+CNTRY NVARCHAR (50)
+);
