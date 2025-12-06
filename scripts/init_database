@@ -6,7 +6,7 @@ Script Purpose:
     This script creates a new database named 'DataWarehouse' after checking if it already exists. 
     If the database exists, it is dropped and recreated. Additionally, the script sets up three schemas 
     within the database: 'bronze', 'silver', and 'gold'.
-	
+
 WARNING:
     Running this script will drop the entire 'DataWarehouse' database if it exists. 
     All data in the database will be permanently deleted. Proceed with caution 
@@ -15,21 +15,55 @@ WARNING:
 
 USE master;
 GO
-IF EXISTS (SELECT 1 FROM sys.databases WHERE name= 'DataWarehouse')
+
+/*
+Drop and recreate the 'DataWarehouse' database
+*/
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DataWarehouse')
 BEGIN
-	ALTER DATABASE DataWarehouse SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-	DROP DATABASE DataWarehouse;
-CREATE DATABASE DataWarehouse;
+    /*
+    =========================================================================
+    OPTIONAL: Backup existing database before deletion
+    Description: Creates a full backup of the existing 'DataWarehouse' 
+    before it is dropped to prevent data loss.
+    =========================================================================
+    */
+    -- BACKUP DATABASE DataWarehouse 
+    -- TO DISK = 'C:\Backup\DataWarehouse.bak' 
+    -- WITH INIT;
+
+    /*
+    =========================================================================
+    OPTIONAL: Rename existing database instead of deleting it
+    Description: Renames the current 'DataWarehouse' database to 
+    'DataWarehouse_OLD' for archival or rollback purposes and
+    immediately stops further script execution.
+    =========================================================================
+    */
+    -- EXEC ('EXEC sp_renamedb ''DataWarehouse'', ''DataWarehouse_OLD''; RETURN;');
+
+    ALTER DATABASE DataWarehouse SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE DataWarehouse;
 END;
 GO
 
-USE datawarehouse;
+/*
+Create the 'DataWarehouse' database
+*/
+CREATE DATABASE DataWarehouse;
 GO
 
-CREATE schema bronze;
+USE DataWarehouse;
 GO
 
-CREATE schema silver;
+/*
+Create Schemas
+*/
+CREATE SCHEMA bronze;
 GO
 
-CREATE schema gold;
+CREATE SCHEMA silver;
+GO
+
+CREATE SCHEMA gold;
+GO
