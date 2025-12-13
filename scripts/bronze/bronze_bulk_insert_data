@@ -1,12 +1,11 @@
-USE DataWarehouse;
+USE Data_Warehouse;
 GO
 
 IF OBJECT_ID('bronze.load_bronze', 'P') IS NOT NULL
     DROP PROCEDURE bronze.load_bronze;
 GO
 
-CREATE PROCEDURE bronze.load_bronze
-AS
+CREATE PROCEDURE bronze.load_bronze AS
 BEGIN
     DECLARE 
         @start_time         DATETIME,
