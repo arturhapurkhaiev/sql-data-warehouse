@@ -100,7 +100,9 @@ SET NOCOUNT ON;
 				 WHEN 'T' THEN 'Touring'
 				 ELSE 'n/a' END AS prd_line,
 			CAST(prd_start_dt AS DATE) AS prd_start_dt,
-			CAST(LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)-1 AS DATE) AS prd_end_dt
+			CAST(
+			DATEADD(DAY, -1, LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt))AS DATE
+) AS prd_end_dt
 		FROM bronze.crm_prd_info;
         SET @end_time = GETDATE();
         PRINT '>>>>>>| Load Duration: '
@@ -177,26 +179,26 @@ SET NOCOUNT ON;
 		PRINT 'Result:'
         INSERT INTO silver.erp_cust_az12
 			(
-			CID,
-			BDATE,
-			GEN
+			cid,
+			bdate,
+			gen
 			)
 
 		SELECT
 			CASE
-				WHEN CID LIKE 'NAS%'
-				THEN SUBSTRING(CID, 4, LEN(CID))
-				ELSE CID
-				END AS CID,
+				WHEN cid LIKE 'NAS%'
+				THEN SUBSTRING(CID, 4, LEN(cid))
+				ELSE cid
+				END AS cid,
 			CASE
-				WHEN BDATE> GETDATE() THEN NULL
-				ELSE CAST(BDATE AS DATE)
-				END AS BDATE,
+				WHEN bdate> GETDATE() THEN NULL
+				ELSE CAST(bdate AS DATE)
+				END AS bdate,
 			CASE 
-				WHEN UPPER(TRIM(GEN)) IN ('F', 'FEMALE')  THEN 'Female'
-				WHEN UPPER(TRIM(GEN)) IN ('M', 'MALE') THEN 'Male'
+				WHEN UPPER(TRIM(gen)) IN ('F', 'FEMALE')  THEN 'Female'
+				WHEN UPPER(TRIM(gen)) IN ('M', 'MALE') THEN 'Male'
 				ELSE 'n/a' 
-				END AS GEN
+				END AS gen
 		FROM bronze.erp_cust_az12
         SET @end_time = GETDATE();
         PRINT '>>>>>>| Load Duration: '
@@ -218,12 +220,12 @@ SET NOCOUNT ON;
 			)
 
 		SELECT
-			REPLACE(CID, '-', '') AS cid,
+			REPLACE(cid, '-', '') AS cid,
 			CASE
-				WHEN TRIM(CNTRY) ='' OR CNTRY IS NULL THEN 'n/a'
-				WHEN TRIM(CNTRY) ='DE' THEN 'Germany'
-				WHEN TRIM(CNTRY) IN ('US', 'USA') THEN 'United States'
-				ELSE CNTRY
+				WHEN TRIM(cntry) ='' OR CNTRY IS NULL THEN 'n/a'
+				WHEN TRIM(cntry) ='DE' THEN 'Germany'
+				WHEN TRIM(cntry) IN ('US', 'USA') THEN 'United States'
+				ELSE cntry
 				END AS cntry
 		FROM bronze.erp_loc_a101;
         SET @end_time = GETDATE();
@@ -248,10 +250,10 @@ SET NOCOUNT ON;
 			)
 
 		SELECT
-			ID,
-			CAT,
-			SUBCAT,
-			MAINTENANCE
+			id,
+			cat,
+			subcat,
+			maintenance
 		FROM bronze.erp_px_cat_g1v2;
         SET @end_time = GETDATE();
         PRINT '>>>>>>| Load Duration: '
